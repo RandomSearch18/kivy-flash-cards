@@ -1,3 +1,4 @@
 {
-  "cSpell.words": ["gridlayout", "kivy"]
+  "cSpell.words": ["gridlayout", "kivy"],
+  "python.analysis.typeCheckingMode": "basic"
 }
