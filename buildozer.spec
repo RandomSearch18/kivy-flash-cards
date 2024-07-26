@@ -212,6 +212,7 @@ android.accept_sdk_license = True
 # this can for example be necessary when importing certain java libraries using the 'android.gradle_dependencies' option
 # see https://developer.android.com/studio/write/java8-support for further information
 # android.add_compile_options = "sourceCompatibility = 1.8", "targetCompatibility = 1.8"
+android.add_compile_options = "compileJava.options.fork = true",  "compileJava.options.forkOptions.executable = '/home/codespace/java/current/bin/javac'"
 
 # (list) Gradle repositories to add {can be necessary for some android.gradle_dependencies}
 # please enclose in double quotes 
