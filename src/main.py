@@ -1,4 +1,6 @@
 from __future__ import annotations
+import csv
+import sys
 import kivy
 from kivy.uix.gridlayout import GridLayout
 from kivy.uix.boxlayout import BoxLayout
@@ -8,6 +10,9 @@ from kivy.app import App
 from kivy.uix.label import Label
 
 kivy.require("2.3.0")
+
+# Types
+Flashcard = tuple[str, str, str]
 
 
 class FlashcardButton(Button):
@@ -40,11 +45,11 @@ class FlashcardButton(Button):
         )
 
     def show_question(self, _=None):
-        self.main_screen.flashcard_container.clear_widgets()
         main_text = TextInput(
             text=self.question,
             readonly=True,
         )
+        self.main_screen.flashcard_container.clear_widgets()
         self.main_screen.flashcard_container.add_widget(main_text)
         self.main_screen.flashcard_container.add_widget(
             Button(
@@ -57,25 +62,13 @@ class FlashcardButton(Button):
 
 
 class FlashcardsScreen(BoxLayout):
-    def __init__(self, **kwargs):
+    def __init__(self, flashcards: list[Flashcard], **kwargs):
         super(FlashcardsScreen, self).__init__(**kwargs)
         self.orientation = "vertical"
 
         self.top_buttons = BoxLayout(
             orientation="horizontal", size_hint_y=None, height=50
         )
-        flashcards: list[tuple[str, str, str]] = [
-            (
-                "RAM",
-                "What is the purpose of RAM?",
-                "Stores in-use data and instructions",
-            ),
-            (
-                "TCP/IP stack",
-                "What are the 4 layers in the TCP/IP stack?",
-                "Application, Transport, Internet, Link",
-            ),
-        ]
         for label, question, answer in flashcards:
             self.top_buttons.add_widget(
                 FlashcardButton(
@@ -91,10 +84,33 @@ class FlashcardsScreen(BoxLayout):
         self.add_widget(self.flashcard_container)
 
 
+def print_usage():
+    print("Usage: python main.py <filename>", file=sys.stderr)
+
+
+def load_flashcards() -> list[Flashcard]:
+    if len(sys.argv) < 2:
+        print("Please provide a path to the flashcards CSV file", file=sys.stderr)
+        print_usage()
+        sys.exit(1)
+    if len(sys.argv) > 2:
+        print("Too many arguments", file=sys.stderr)
+        print_usage()
+        sys.exit(1)
+
+    file_name = sys.argv[1]
+    try:
+        with open(file_name) as file:
+            reader = csv.reader(file)
+            return list(reader)  # type: ignore
+    except FileNotFoundError:
+        print()
+
+
 class Flashcards(App):
 
     def build(self):
-        return FlashcardsScreen()
+        return FlashcardsScreen(flashcards=load_flashcards())
 
 
 if __name__ == "__main__":
