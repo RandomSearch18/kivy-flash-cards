@@ -16,6 +16,16 @@ kivy.require("2.3.0")
 Flashcard = tuple[str, str, str]
 
 
+class WrappedLabel(Label):
+    # Thank you https://stackoverflow.com/a/58227983/11519302
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+        self.bind(
+            width=lambda *_: self.setter("text_size")(self, (self.width, None)),
+            texture_size=lambda *_: self.setter("height")(self, self.texture_size[1]),
+        )
+
+
 class FlashcardButton(Button):
     def __init__(
         self, parent: FlashcardsScreen, label: str, question: str, answer: str, **kwargs
@@ -44,14 +54,6 @@ class FlashcardButton(Button):
                 height=50,
             )
         )
-        popup = Popup(
-            title="Test popup",
-            content=Label(text="Hello world"),
-            size_hint=(0.8, 0.8),
-            # size=(400, 400),
-            auto_dismiss=False,
-        )
-        popup.open()
 
     def show_question(self, _=None):
         main_text = TextInput(
@@ -88,9 +90,23 @@ class FlashcardsScreen(BoxLayout):
         self.flashcard_container.add_widget(splash_text)
 
     def load_flashcards(self, _):
+        try:
+            flashcards = get_flashcards()
+        except OSError as error:
+            popup = Popup(
+                title="Error while starting the app",
+                content=WrappedLabel(
+                    text=f"Error: Couldn't read the flashcards file.\n\n{error}"
+                ),
+                size_hint=(0.8, 0.8),
+                auto_dismiss=False,
+            )
+            popup.open()
+            return
+
         loaded_flashcards = 0
         invalid_flashcards = 0
-        for flashcard_data in get_flashcards():
+        for flashcard_data in flashcards:
             if len(flashcard_data) < 3:
                 print(
                     f"Skipping invalid flashcard: {flashcard_data}",
@@ -129,14 +145,9 @@ def get_flashcards() -> list[Flashcard]:
         sys.exit(1)
 
     file_name = sys.argv[1]
-    try:
-        with open(file_name) as file:
-            reader = csv.reader(file)
-            return list(reader)  # type: ignore
-    except OSError as error:
-        print(f"Failed to open {file_name}: {error}", file=sys.stderr)
-        print_usage()
-        sys.exit(1)
+    with open(file_name) as file:
+        reader = csv.reader(file)
+        return list(reader)  # type: ignore
 
 
 class Flashcards(App):
