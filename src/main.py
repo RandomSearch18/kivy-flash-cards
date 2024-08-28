@@ -103,8 +103,10 @@ def load_flashcards() -> list[Flashcard]:
         with open(file_name) as file:
             reader = csv.reader(file)
             return list(reader)  # type: ignore
-    except FileNotFoundError:
-        print()
+    except OSError as error:
+        print(f"Failed to open {file_name}: {error}", file=sys.stderr)
+        print_usage()
+        sys.exit(1)
 
 
 class Flashcards(App):
