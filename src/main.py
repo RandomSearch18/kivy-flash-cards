@@ -2,7 +2,8 @@ from __future__ import annotations
 import csv
 import sys
 import kivy
-from kivy.uix.gridlayout import GridLayout
+from kivy.clock import Clock
+from kivy.uix.popup import Popup
 from kivy.uix.boxlayout import BoxLayout
 from kivy.uix.textinput import TextInput
 from kivy.uix.button import Button
@@ -43,6 +44,14 @@ class FlashcardButton(Button):
                 height=50,
             )
         )
+        popup = Popup(
+            title="Test popup",
+            content=Label(text="Hello world"),
+            size_hint=(0.8, 0.8),
+            # size=(400, 400),
+            auto_dismiss=False,
+        )
+        popup.open()
 
     def show_question(self, _=None):
         main_text = TextInput(
@@ -62,19 +71,32 @@ class FlashcardButton(Button):
 
 
 class FlashcardsScreen(BoxLayout):
-    def __init__(self, flashcards: list[Flashcard], **kwargs):
+    def __init__(self, **kwargs):
         super(FlashcardsScreen, self).__init__(**kwargs)
         self.orientation = "vertical"
 
         self.top_buttons = BoxLayout(
             orientation="horizontal", size_hint_y=None, height=50
         )
-        for flashcard_data in flashcards:
+        self.add_widget(self.top_buttons)
+        self.flashcard_container = BoxLayout(orientation="vertical")
+        self.add_widget(self.flashcard_container)
+        Clock.schedule_once(self.load_flashcards, 0)
+
+        self.flashcard_container.clear_widgets()
+        splash_text = Label(text=f"Loading flashcards...")
+        self.flashcard_container.add_widget(splash_text)
+
+    def load_flashcards(self, _):
+        loaded_flashcards = 0
+        invalid_flashcards = 0
+        for flashcard_data in get_flashcards():
             if len(flashcard_data) < 3:
                 print(
                     f"Skipping invalid flashcard: {flashcard_data}",
                     file=sys.stderr,
                 )
+                invalid_flashcards += 1
                 continue
             label, question, answer = flashcard_data
             self.top_buttons.add_widget(
@@ -85,17 +107,18 @@ class FlashcardsScreen(BoxLayout):
                     answer=answer,
                 )
             )
-        self.add_widget(self.top_buttons)
+            loaded_flashcards += 1
 
-        self.flashcard_container = BoxLayout(orientation="vertical")
-        self.add_widget(self.flashcard_container)
+        self.flashcard_container.clear_widgets()
+        splash_text = Label(text=f"Loaded {loaded_flashcards} flashcards")
+        self.flashcard_container.add_widget(splash_text)
 
 
 def print_usage():
     print("Usage: python main.py <filename>", file=sys.stderr)
 
 
-def load_flashcards() -> list[Flashcard]:
+def get_flashcards() -> list[Flashcard]:
     if len(sys.argv) < 2:
         print("Please provide a path to the flashcards CSV file", file=sys.stderr)
         print_usage()
@@ -119,7 +142,7 @@ def load_flashcards() -> list[Flashcard]:
 class Flashcards(App):
 
     def build(self):
-        return FlashcardsScreen(flashcards=load_flashcards())
+        return FlashcardsScreen()
 
 
 if __name__ == "__main__":
