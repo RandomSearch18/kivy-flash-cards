@@ -69,7 +69,14 @@ class FlashcardsScreen(BoxLayout):
         self.top_buttons = BoxLayout(
             orientation="horizontal", size_hint_y=None, height=50
         )
-        for label, question, answer in flashcards:
+        for flashcard_data in flashcards:
+            if len(flashcard_data) < 3:
+                print(
+                    f"Skipping invalid flashcard: {flashcard_data}",
+                    file=sys.stderr,
+                )
+                continue
+            label, question, answer = flashcard_data
             self.top_buttons.add_widget(
                 FlashcardButton(
                     parent=self,
