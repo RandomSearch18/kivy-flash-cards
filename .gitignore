@@ -1,5 +1,6 @@
-.buildozer
 flashcards.csv
+.buildozer
+*.apk
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
