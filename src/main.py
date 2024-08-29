@@ -41,21 +41,21 @@ Builder.load_string(
         text: root.text
         padding: 20, 20
         font_size: 20
+
+<BottomButtons>:
+    orientation: "horizontal"
+    size_hint_y: None
+    height: 50
+    Button:
+        text: "Edit flashcards"
+        id: edit_flashcards_button
+        on_release: root.open_flashcards_file()
     """
 )
 
 
 class ScrollableLabel(ScrollView):
     text = StringProperty("")
-
-
-Builder.load_string(
-    """
-<BottomButtons>:
-    Label:
-        text: "Bottom buttons"
-    """
-)
 
 
 class BottomButtons(BoxLayout):
@@ -119,11 +119,7 @@ class FlashcardsScreen(BoxLayout):
         self.add_widget(self.top_buttons)
         self.flashcard_container = BoxLayout(orientation="vertical")
         self.add_widget(self.flashcard_container)
-        # self.bottom_buttons = BoxLayout(
-        #     orientation="horizontal", size_hint_y=None, height=50
-        # )
         self.bottom_buttons = BottomButtons()
-
         self.add_widget(self.bottom_buttons)
 
         self.flashcard_container.clear_widgets()
@@ -213,9 +209,12 @@ def get_flashcards() -> list[Flashcard]:
 
 
 class Flashcards(App):
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+        self.top = FlashcardsScreen()
 
     def build(self):
-        return FlashcardsScreen()
+        return self.top
 
 
 if __name__ == "__main__":
