@@ -1,4 +1,10 @@
 {
-  "cSpell.words": ["gridlayout", "boxlayout", "floatlayout", "kivy"],
+  "cSpell.words": [
+    "gridlayout",
+    "boxlayout",
+    "floatlayout",
+    "scrollview",
+    "kivy"
+  ],
   "python.analysis.typeCheckingMode": "basic"
 }

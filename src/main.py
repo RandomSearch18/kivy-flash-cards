@@ -9,6 +9,9 @@ from kivy.uix.textinput import TextInput
 from kivy.uix.button import Button
 from kivy.app import App
 from kivy.uix.label import Label
+from kivy.uix.scrollview import ScrollView
+from kivy.properties import StringProperty
+from kivy.lang import Builder
 
 kivy.require("2.3.0")
 
@@ -24,6 +27,24 @@ class WrappedLabel(Label):
             width=lambda *_: self.setter("text_size")(self, (self.width, None)),
             texture_size=lambda *_: self.setter("height")(self, self.texture_size[1]),
         )
+
+
+Builder.load_string(
+    """
+<ScrollableLabel>:
+    Label:
+        size_hint_y: None
+        height: self.texture_size[1]
+        text_size: self.width, None
+        text: root.text
+        padding: 20, 20
+        font_size: 20
+    """
+)
+
+
+class ScrollableLabel(ScrollView):
+    text = StringProperty("")
 
 
 class FlashcardButton(Button):
@@ -130,14 +151,10 @@ class FlashcardsScreen(BoxLayout):
         if loaded_flashcards:
             splash_text += f"Loaded {loaded_flashcards} flashcard(s). Click on one at the top to view it."
         if invalid_flashcards:
-            splash_text += (
-                f"\n\nWarning: Skipped {len(invalid_flashcards)} invalid flashcard(s):"
-            )
+            splash_text += f"\n\n\nWarning: Skipped {len(invalid_flashcards)} invalid flashcard(s):\n"
             for flashcard_data in invalid_flashcards:
                 splash_text += f"\n{flashcard_data}"
-        splash_text_label = WrappedLabel(
-            text=splash_text, padding=[30, 0], font_size="20sp"
-        )
+        splash_text_label = ScrollableLabel(text=splash_text)
         self.flashcard_container.add_widget(splash_text_label)
 
 
