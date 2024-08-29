@@ -29,6 +29,7 @@ class WrappedLabel(Label):
         )
 
 
+# Source: https://github.com/kivy/kivy/wiki/Scrollable-Label
 Builder.load_string(
     """
 <ScrollableLabel>:

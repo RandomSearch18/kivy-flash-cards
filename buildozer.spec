@@ -7,7 +7,7 @@ title = Kivy Flash Cards
 package.name = kivyflashcards
 
 # (str) Package domain (needed for android/ios packaging)
-package.domain = xyz.slevel
+package.domain = xyz.slevel.kivyflashcards
 
 # (str) Source code where the main.py live
 source.dir = src
