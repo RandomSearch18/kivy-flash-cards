@@ -1,5 +1,6 @@
 from __future__ import annotations
 import csv
+from pathlib import Path
 import sys
 import kivy
 from kivy.clock import Clock
@@ -148,9 +149,11 @@ class FlashcardsScreen(BoxLayout):
             loaded_flashcards += 1
 
         self.flashcard_container.clear_widgets()
-        splash_text = "No flashcards!"
+        splash_text = ""
         if loaded_flashcards:
             splash_text += f"Loaded {loaded_flashcards} flashcard(s). Click on one at the top to view it."
+        else:
+            splash_text += "No flashcards!"
         if invalid_flashcards:
             splash_text += f"\n\n\nWarning: Skipped {len(invalid_flashcards)} invalid flashcard(s):\n"
             for flashcard_data in invalid_flashcards:
@@ -163,13 +166,29 @@ def print_usage():
     print("Usage: python main.py [filename]", file=sys.stderr)
 
 
-def get_flashcards_file():
-    file_name = sys.argv[1] if len(sys.argv) == 2 else "flashcards.csv"
-    return open(file_name)
+def get_flashcards_path():
+    return Path(sys.argv[1]) if len(sys.argv) == 2 else Path("flashcards.csv")
+
+
+def read_flashcards_file():
+    file_path = get_flashcards_path()
+    try:
+        return open(file_path)
+    except FileNotFoundError:
+        return None
+
+
+def write_flashcards_file(flashcards: str):
+    file_path = get_flashcards_path()
+    with open(file_path, "w") as file:
+        file.write(flashcards)
 
 
 def get_flashcards() -> list[Flashcard]:
-    with get_flashcards_file() as file:
+    flashcards_file = read_flashcards_file()
+    if not flashcards_file:
+        return []
+    with flashcards_file as file:
         reader = csv.reader(file)
         return list(reader)  # type: ignore
 
