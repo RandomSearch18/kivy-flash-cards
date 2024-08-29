@@ -50,7 +50,10 @@ Builder.load_string(
     Button:
         text: "Edit flashcards"
         id: edit_flashcards_button
-        on_release: root.open_flashcards_file()
+        on_release: app.show_editor()
+    Button:
+        visible: False
+        id: toggle_answer_button    
     """
 )
 
@@ -72,7 +75,11 @@ class FlashcardButton(Button):
         self.question = question
         self.answer = answer
         self.main_screen = parent
-        self.bind(on_release=self.show_question)
+        self.bind(on_release=self.activate)
+
+    def activate(self, _):
+        self.main_screen.active_flashcard = self
+        self.show_question()
 
     def show_answer(
         self,
@@ -83,29 +90,25 @@ class FlashcardButton(Button):
             readonly=True,
         )
         self.main_screen.flashcard_container.add_widget(main_text)
-        self.main_screen.flashcard_container.add_widget(
-            Button(
-                text="Show question",
-                on_release=lambda _: self.show_question(),
-                size_hint_y=None,
-                height=50,
-            )
+        toggle_answer_button = self.main_screen.bottom_buttons.ids.toggle_answer_button
+        toggle_answer_button.text = "Show question"
+        toggle_answer_button.visible = True
+        toggle_answer_button.bind(
+            on_release=lambda _: self.show_question(),
         )
 
-    def show_question(self, _=None):
+    def show_question(self):
         main_text = TextInput(
             text=self.question,
             readonly=True,
         )
         self.main_screen.flashcard_container.clear_widgets()
         self.main_screen.flashcard_container.add_widget(main_text)
-        self.main_screen.flashcard_container.add_widget(
-            Button(
-                text="Show answer",
-                on_release=lambda _: self.show_answer(),
-                size_hint_y=None,
-                height=50,
-            )
+        toggle_answer_button = self.main_screen.bottom_buttons.ids.toggle_answer_button
+        toggle_answer_button.text = "Show answer"
+        toggle_answer_button.visible = True
+        toggle_answer_button.bind(
+            on_release=lambda _: self.show_answer(),
         )
 
 
@@ -114,6 +117,7 @@ class FlashcardsScreen(BoxLayout):
         super(FlashcardsScreen, self).__init__(**kwargs)
         self.orientation = "vertical"
 
+        self.active_flashcard: FlashcardButton | None = None
         self.top_buttons = BoxLayout(
             orientation="horizontal", size_hint_y=None, height=50
         )
