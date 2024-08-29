@@ -105,14 +105,14 @@ class FlashcardsScreen(BoxLayout):
             return
 
         loaded_flashcards = 0
-        invalid_flashcards = 0
+        invalid_flashcards = []
         for flashcard_data in flashcards:
             if len(flashcard_data) < 3:
                 print(
                     f"Skipping invalid flashcard: {flashcard_data}",
                     file=sys.stderr,
                 )
-                invalid_flashcards += 1
+                invalid_flashcards.append(flashcard_data)
                 continue
             label, question, answer = flashcard_data
             self.top_buttons.add_widget(
@@ -126,8 +126,19 @@ class FlashcardsScreen(BoxLayout):
             loaded_flashcards += 1
 
         self.flashcard_container.clear_widgets()
-        splash_text = Label(text=f"Loaded {loaded_flashcards} flashcards")
-        self.flashcard_container.add_widget(splash_text)
+        splash_text = ""
+        if loaded_flashcards:
+            splash_text += f"Loaded {loaded_flashcards} flashcard(s). Click on one at the top to view it."
+        if invalid_flashcards:
+            splash_text += (
+                f"\n\nWarning: Skipped {len(invalid_flashcards)} invalid flashcard(s):"
+            )
+            for flashcard_data in invalid_flashcards:
+                splash_text += f"\n{flashcard_data}"
+        splash_text_label = WrappedLabel(
+            text=splash_text, padding=[30, 0], font_size="20sp"
+        )
+        self.flashcard_container.add_widget(splash_text_label)
 
 
 def print_usage():
