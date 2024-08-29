@@ -1,4 +1,5 @@
 from __future__ import annotations
+from calendar import c
 import csv
 from pathlib import Path
 import sys
@@ -140,6 +141,7 @@ class FlashcardsScreen(BoxLayout):
                 auto_dismiss=False,
             )
             popup.open()
+
             return
 
         loaded_flashcards = 0
@@ -212,6 +214,28 @@ class Flashcards(App):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
         self.top = FlashcardsScreen()
+
+    def show_editor(self):
+        flashcards_file = read_flashcards_file()
+        content = flashcards_file.read() if flashcards_file else ""
+
+        popup = Popup(
+            title="Edit flashcards",
+            content=TextInput(
+                text=content,
+            ),
+            size_hint=(0.9, 0.9),
+            auto_dismiss=False,
+        )
+
+        def save_flashcards(_):
+            write_flashcards_file(popup.content.text)
+            popup.dismiss()
+            self.top.flashcard_container.clear_widgets()
+            Clock.schedule_once(self.top.load_flashcards, 0)
+
+        popup.content.bind(on_text_validate=save_flashcards)
+        popup.open()
 
     def build(self):
         return self.top
