@@ -49,6 +49,19 @@ class ScrollableLabel(ScrollView):
     text = StringProperty("")
 
 
+Builder.load_string(
+    """
+<BottomButtons>:
+    Label:
+        text: "Bottom buttons"
+    """
+)
+
+
+class BottomButtons(BoxLayout):
+    pass
+
+
 class FlashcardButton(Button):
     def __init__(
         self, parent: FlashcardsScreen, label: str, question: str, answer: str, **kwargs
@@ -106,11 +119,17 @@ class FlashcardsScreen(BoxLayout):
         self.add_widget(self.top_buttons)
         self.flashcard_container = BoxLayout(orientation="vertical")
         self.add_widget(self.flashcard_container)
-        Clock.schedule_once(self.load_flashcards, 0)
+        # self.bottom_buttons = BoxLayout(
+        #     orientation="horizontal", size_hint_y=None, height=50
+        # )
+        self.bottom_buttons = BottomButtons()
+
+        self.add_widget(self.bottom_buttons)
 
         self.flashcard_container.clear_widgets()
         splash_text = Label(text=f"Loading flashcards...")
         self.flashcard_container.add_widget(splash_text)
+        Clock.schedule_once(self.load_flashcards, 0)
 
     def load_flashcards(self, _):
         try:
