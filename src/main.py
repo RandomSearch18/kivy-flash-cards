@@ -148,7 +148,7 @@ class FlashcardsScreen(BoxLayout):
             loaded_flashcards += 1
 
         self.flashcard_container.clear_widgets()
-        splash_text = ""
+        splash_text = "No flashcards!"
         if loaded_flashcards:
             splash_text += f"Loaded {loaded_flashcards} flashcard(s). Click on one at the top to view it."
         if invalid_flashcards:
