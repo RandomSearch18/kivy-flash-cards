@@ -160,21 +160,16 @@ class FlashcardsScreen(BoxLayout):
 
 
 def print_usage():
-    print("Usage: python main.py <filename>", file=sys.stderr)
+    print("Usage: python main.py [filename]", file=sys.stderr)
+
+
+def get_flashcards_file():
+    file_name = sys.argv[1] if len(sys.argv) == 2 else "flashcards.csv"
+    return open(file_name)
 
 
 def get_flashcards() -> list[Flashcard]:
-    if len(sys.argv) < 2:
-        print("Please provide a path to the flashcards CSV file", file=sys.stderr)
-        print_usage()
-        sys.exit(1)
-    if len(sys.argv) > 2:
-        print("Too many arguments", file=sys.stderr)
-        print_usage()
-        sys.exit(1)
-
-    file_name = sys.argv[1]
-    with open(file_name) as file:
+    with get_flashcards_file() as file:
         reader = csv.reader(file)
         return list(reader)  # type: ignore
 
@@ -186,4 +181,9 @@ class Flashcards(App):
 
 
 if __name__ == "__main__":
+    if len(sys.argv) > 2:
+        print("Too many arguments", file=sys.stderr)
+        print_usage()
+        sys.exit(1)
+
     Flashcards().run()
