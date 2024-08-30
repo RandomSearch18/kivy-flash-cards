@@ -1,5 +1,4 @@
 from __future__ import annotations
-from calendar import c
 import csv
 from pathlib import Path
 import sys
@@ -53,7 +52,19 @@ Builder.load_string(
         on_release: app.show_editor()
     Button:
         visible: False
-        id: toggle_answer_button    
+        id: toggle_answer_button
+
+<FlashcardsEditor>:
+    orientation: "vertical"
+    text: ""
+    TextInput:
+        id: flashcards_input
+        text: root.text
+    Button:
+        text: "Save"
+        size_hint_y: None
+        height: 50
+        id: save_flashcards_button
     """
 )
 
@@ -64,6 +75,10 @@ class ScrollableLabel(ScrollView):
 
 class BottomButtons(BoxLayout):
     pass
+
+
+class FlashcardsEditor(BoxLayout):
+    text = StringProperty("")
 
 
 class FlashcardButton(Button):
@@ -148,6 +163,7 @@ class FlashcardsScreen(BoxLayout):
 
             return
 
+        self.top_buttons.clear_widgets()
         loaded_flashcards = 0
         invalid_flashcards = []
         for flashcard_data in flashcards:
@@ -224,21 +240,19 @@ class Flashcards(App):
         content = flashcards_file.read() if flashcards_file else ""
 
         popup = Popup(
-            title="Edit flashcards",
-            content=TextInput(
-                text=content,
-            ),
+            title="Edit flashcards CSV file",
+            content=FlashcardsEditor(text=content),
             size_hint=(0.9, 0.9),
             auto_dismiss=False,
         )
 
         def save_flashcards(_):
-            write_flashcards_file(popup.content.text)
-            popup.dismiss()
-            self.top.flashcard_container.clear_widgets()
+            write_flashcards_file(popup.content.ids.flashcards_input.text)
+            # self.top.flashcard_container.clear_widgets()
             Clock.schedule_once(self.top.load_flashcards, 0)
+            popup.dismiss()
 
-        popup.content.bind(on_text_validate=save_flashcards)
+        popup.content.ids.save_flashcards_button.bind(on_release=save_flashcards)
         popup.open()
 
     def build(self):
