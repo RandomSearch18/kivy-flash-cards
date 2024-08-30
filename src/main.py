@@ -211,7 +211,7 @@ class FlashcardsScreen(BoxLayout):
         if loaded_flashcards:
             splash_text += f"Loaded {loaded_flashcards} flashcard(s). Click on one at the top to view it."
         else:
-            splash_text += "No flashcards!"
+            splash_text += "No flashcards!\n\nAdd some to the CSV file using the button at the bottom."
         if invalid_flashcards:
             splash_text += f"\n\n\nWarning: Skipped {len(invalid_flashcards)} invalid flashcard(s):\n"
             for flashcard_data in invalid_flashcards:
