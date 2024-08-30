@@ -21,22 +21,6 @@ kivy.require("2.3.0")
 Flashcard = tuple[str, str, str]
 
 
-class WrappedLabel(Label):
-    # Thank you https://stackoverflow.com/a/58227983/11519302
-    def __init__(self, **kwargs):
-        super().__init__(**kwargs)
-        self.bind(
-            width=lambda *_: self.setter("text_size")(self, (self.width, None)),
-            texture_size=lambda *_: self.setter("height")(self, self.texture_size[1]),
-        )
-
-
-def unbind_all(widget: Widget, event: str):
-    for callback in widget._cb:  # type: ignore
-        widget.funbind(event, callback)
-    widget._cb = []  # type: ignore
-
-
 # Source: https://github.com/kivy/kivy/wiki/Scrollable-Label
 Builder.load_string(
     """
@@ -90,6 +74,16 @@ class BottomButtons(BoxLayout):
 
 class FlashcardsEditor(BoxLayout):
     text = StringProperty("")
+
+
+class WrappedLabel(Label):
+    # Thank you to https://stackoverflow.com/a/58227983/11519302
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+        self.bind(
+            width=lambda *_: self.setter("text_size")(self, (self.width, None)),
+            texture_size=lambda *_: self.setter("height")(self, self.texture_size[1]),
+        )
 
 
 class FlashcardButton(Button):
