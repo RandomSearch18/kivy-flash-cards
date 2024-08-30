@@ -8,6 +8,10 @@
 
 The program is currently in development, so the easiest way to run it on desktop platforms is by following the [development instructions](#development-instructions).
 
+### Linux packages
+
+I have not yet worked out how to do this! Feel free to DM me or open an issue if you have ideas to share.
+
 ### Android
 
 The program can also be run as an Android app. Debug builds are available from the [Releases tab](https://github.com/RandomSearch18/kivy-flash-cards/releases)
