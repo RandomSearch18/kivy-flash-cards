@@ -254,11 +254,16 @@ def get_flashcards() -> list[Flashcard]:
 class Flashcards(App):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
+        self.default_flashcards_csv = (
+            "Example, An important question, An impressive answer\n"
+        )
         self.top = FlashcardsScreen()
 
     def show_editor(self):
         flashcards_file = read_flashcards_file()
-        content = flashcards_file.read() if flashcards_file else ""
+        content = (
+            flashcards_file.read() if flashcards_file else self.default_flashcards_csv
+        )
 
         popup = Popup(
             title="Edit flashcards CSV file",
