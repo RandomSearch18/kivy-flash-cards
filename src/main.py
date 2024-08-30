@@ -68,6 +68,9 @@ Builder.load_string(
     TextInput:
         id: flashcards_input
         text: root.text
+        # https://stackoverflow.com/a/76593994/11519302
+        input_type: "text"
+        keyboard_suggestions: True
     Button:
         text: "Save"
         size_hint_y: None
