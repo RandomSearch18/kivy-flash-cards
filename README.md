@@ -1,5 +1,9 @@
 # Kivy flashcard program
 
+[![Built during Arcade 2024](https://badges.api.lorebooks.wiki/badges/hackclub/arcade)](https://hackclub.com/arcade)
+
+> A simple, cross-platform flashcard program built using Python and Kivy
+
 ## Installation
 
 The program is currently in development, so the easiest way to run it on desktop platforms is by following the [development instructions](#development-instructions).
