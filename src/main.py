@@ -196,9 +196,9 @@ class FlashcardsScreen(BoxLayout):
             self.top_buttons.add_widget(
                 FlashcardButton(
                     parent=self,
-                    label=label,
-                    question=question,
-                    answer=answer,
+                    label=label.strip(),
+                    question=question.strip(),
+                    answer=answer.strip(),
                 )
             )
             loaded_flashcards += 1
