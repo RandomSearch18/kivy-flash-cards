@@ -26,6 +26,8 @@ The program can also be run as an Android app. Debug builds are available from t
 3. `pip install -r requirements.txt`
 4. Run `src/main.py`
 
+By default, flashcards are written to and read from `flashcards.csv` in the current working directory. Optionally, you can point the program to a different flashcards CSV file by providing it as a command-line argument, e.g. `src/main.py path/to/flashcards.csv`.
+
 ### Building for Android
 
 1. Clone the [Buildozer](https://github.com/kivy/buildozer) repo, change directory into it, and build the docker image with `docker build --tag=kivy/buildozer .`
