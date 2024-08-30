@@ -4,6 +4,7 @@ from pathlib import Path
 import sys
 import kivy
 from kivy.clock import Clock
+from kivy.uix.widget import Widget
 from kivy.uix.popup import Popup
 from kivy.uix.boxlayout import BoxLayout
 from kivy.uix.textinput import TextInput
@@ -30,6 +31,12 @@ class WrappedLabel(Label):
         )
 
 
+def unbind_all(widget: Widget, event: str):
+    for callback in widget._cb:  # type: ignore
+        widget.funbind(event, callback)
+    widget._cb = []  # type: ignore
+
+
 # Source: https://github.com/kivy/kivy/wiki/Scrollable-Label
 Builder.load_string(
     """
@@ -46,9 +53,9 @@ Builder.load_string(
     orientation: "horizontal"
     size_hint_y: None
     height: 50
-    Button:
+    BoxLayout:
         visible: False
-        id: toggle_answer_button
+        id: toggle_answer_buttons
     Button:
         text: "Edit flashcards"
         id: edit_flashcards_button
@@ -97,20 +104,24 @@ class FlashcardButton(Button):
         self.main_screen.active_flashcard = self
         self.show_question()
 
-    def show_answer(
-        self,
-    ):
-        self.main_screen.flashcard_container.clear_widgets()
+    def show_answer(self):
         main_text = TextInput(
             text=self.answer,
             readonly=True,
         )
+        self.main_screen.flashcard_container.clear_widgets()
         self.main_screen.flashcard_container.add_widget(main_text)
-        toggle_answer_button = self.main_screen.bottom_buttons.ids.toggle_answer_button
-        toggle_answer_button.text = "Show question"
-        toggle_answer_button.visible = True
-        toggle_answer_button.bind(
-            on_release=lambda _: self.show_question(),
+        toggle_answer_buttons = (
+            self.main_screen.bottom_buttons.ids.toggle_answer_buttons
+        )
+        toggle_answer_buttons.clear_widgets()
+        toggle_answer_buttons.add_widget(
+            Button(
+                text="Show question",
+                on_release=lambda _: self.show_question(),
+                size_hint_y=None,
+                height=50,
+            )
         )
 
     def show_question(self):
@@ -120,11 +131,17 @@ class FlashcardButton(Button):
         )
         self.main_screen.flashcard_container.clear_widgets()
         self.main_screen.flashcard_container.add_widget(main_text)
-        toggle_answer_button = self.main_screen.bottom_buttons.ids.toggle_answer_button
-        toggle_answer_button.text = "Show answer"
-        toggle_answer_button.visible = True
-        toggle_answer_button.bind(
-            on_release=lambda _: self.show_answer(),
+        toggle_answer_buttons = (
+            self.main_screen.bottom_buttons.ids.toggle_answer_buttons
+        )
+        toggle_answer_buttons.clear_widgets()
+        toggle_answer_buttons.add_widget(
+            Button(
+                text="Show answer",
+                on_release=lambda _: self.show_answer(),
+                size_hint_y=None,
+                height=50,
+            )
         )
 
 
