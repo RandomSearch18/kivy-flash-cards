@@ -47,12 +47,13 @@ Builder.load_string(
     size_hint_y: None
     height: 50
     Button:
+        visible: False
+        id: toggle_answer_button
+    Button:
         text: "Edit flashcards"
         id: edit_flashcards_button
         on_release: app.show_editor()
-    Button:
-        visible: False
-        id: toggle_answer_button
+        size_hint: 0.5, 1
 
 <FlashcardsEditor>:
     orientation: "vertical"
