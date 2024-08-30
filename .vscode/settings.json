@@ -4,7 +4,8 @@
     "boxlayout",
     "floatlayout",
     "scrollview",
-    "kivy"
+    "kivy",
+    "Buildozer"
   ],
   "python.analysis.typeCheckingMode": "basic"
 }
