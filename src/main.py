@@ -185,7 +185,7 @@ class FlashcardsScreen(BoxLayout):
         loaded_flashcards = 0
         invalid_flashcards = []
         for flashcard_data in flashcards:
-            if len(flashcard_data) < 3:
+            if len(flashcard_data) != 3:
                 print(
                     f"Skipping invalid flashcard: {flashcard_data}",
                     file=sys.stderr,
