@@ -163,12 +163,17 @@ class FlashcardsScreen(BoxLayout):
         self.bottom_buttons = BottomButtons()
         self.add_widget(self.bottom_buttons)
 
+        Clock.schedule_once(self.reload_flashcards_ui, 0)
+
+    def reload_flashcards_ui(self, _=None):
         self.flashcard_container.clear_widgets()
         splash_text = Label(text=f"Loading flashcards...")
         self.flashcard_container.add_widget(splash_text)
-        Clock.schedule_once(self.load_flashcards, 0)
+        self.bottom_buttons.ids.toggle_answer_buttons.clear_widgets()
+        self.bottom_buttons.ids.toggle_answer_buttons.visible = False
+        self.load_flashcard_buttons()
 
-    def load_flashcards(self, _):
+    def load_flashcard_buttons(self, _=None):
         try:
             flashcards = get_flashcards()
         except OSError as error:
@@ -274,8 +279,7 @@ class Flashcards(App):
 
         def save_flashcards(_):
             write_flashcards_file(popup.content.ids.flashcards_input.text)
-            # self.top.flashcard_container.clear_widgets()
-            Clock.schedule_once(self.top.load_flashcards, 0)
+            self.top.reload_flashcards_ui()
             popup.dismiss()
 
         popup.content.ids.save_flashcards_button.bind(on_release=save_flashcards)
